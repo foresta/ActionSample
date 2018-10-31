@@ -10,6 +10,7 @@ public:
     
 private:
     cocos2d::Sprite* icon { nullptr };
+    cocos2d::MenuItem* resetButton { nullptr };
     std::function<void()> action { nullptr };
     
 private:

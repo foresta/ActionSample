@@ -12,7 +12,7 @@ bool TestScene::init()
     this->setupIcon();
     this->setupResetButton();
     
-    this->action = CC_CALLBACK_0(TestScene::targeted_action, this);
+    this->action = CC_CALLBACK_0(TestScene::tint, this);
     
     return true;
 }
@@ -33,16 +33,18 @@ void TestScene::setupResetButton()
     Vec2 origin { Director::getInstance()->getVisibleOrigin() };
     
     // メニュー
-    MenuItemImage* closeItem { MenuItemImage::create("CloseNormal.png", "CloseSelected.png", [this](Ref* _){
+    MenuItemImage* resetButton { MenuItemImage::create("CloseNormal.png", "CloseSelected.png", [this](Ref* _){
         this->reset();
     }) };
-    closeItem->setScale(3.f);
-    closeItem->setPosition({ winSize.width -100, winSize.height - 100});
+    resetButton->setScale(3.f);
+    resetButton->setPosition({ winSize.width -100, winSize.height - 100});
     
     
-    Menu* menu { Menu::create(closeItem, nullptr) };
+    Menu* menu { Menu::create(resetButton, nullptr) };
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu);
+    
+    this->resetButton = resetButton;
 }
 
 void TestScene::reset()
@@ -61,7 +63,9 @@ void TestScene::onEnterTransitionDidFinish()
 {
     Scene::onEnterTransitionDidFinish();
 
-    this->action();
+    this->runAction(Sequence::createWithTwoActions(DelayTime::create(2.f), CallFunc::create([this](){
+        this->action();
+    })));
 }
 
 #pragma mark -
@@ -176,7 +180,15 @@ void TestScene::reverse_time()
 
 void TestScene::targeted_action()
 {
-    this->runAction(TargetedAction::create(this->icon, MoveBy::create(1.f, Vec2(50, 0))));
+    // アイコンを動かしたのちに、閉じるボタンを拡大
+    // 違うノードに対して一連の流れでアクションさせたい時に便利
+    TargetedAction* iconMove { TargetedAction::create(this->icon, MoveBy::create(1.f, Vec2(50, 0))) };
+    TargetedAction* resetButtonScale { TargetedAction::create() };
+    
+    this->runAction(
+                    Sequence::createWithTwoActions(
+                    );
+        );
 }
 
 void TestScene::repeat()
@@ -186,7 +198,6 @@ void TestScene::repeat()
 
 void TestScene::repeat_forever()
 {
-    
 }
 
 
